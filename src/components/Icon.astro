@@ -1,0 +1,300 @@
+---
+/**
+ * Simple SVG icon helper component
+ * Renders inline SVG paths for standard social and interface icons
+ */
+interface Props {
+  name: string;
+  class?: string;
+}
+
+const { name, class: className = "w-4 h-4" } = Astro.props;
+
+// Icon SVG path definitions
+const icons: Record<string, { viewBox?: string; fill?: string; stroke?: boolean; paths: string[] }> = {
+  // Brand & Socials
+  github: {
+    paths: [
+      '<path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>'
+    ]
+  },
+  twitter: {
+    paths: [
+      '<path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>'
+    ]
+  },
+  x: {
+    paths: [
+      '<path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>'
+    ]
+  },
+  linkedin: {
+    paths: [
+      '<path fill="currentColor" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45c-.9 0-1.63.73-1.63 1.63s.73 1.63 1.63 1.63 1.63-.73 1.63-1.63-.73-1.63-1.63-1.63z"/>'
+    ]
+  },
+  bluesky: {
+    paths: [
+      '<path fill="currentColor" d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566 1.01 1.7 1.463 1.7 3.25c0 .658.125 3.398.243 4.168.435 2.853 2.112 3.655 3.637 3.864-2.38.384-4.48 1.488-4.48 4.257 0 3.018 2.766 5.093 5.485 5.093 2.502 0 4.275-1.503 5.415-3.328 1.14 1.825 2.913 3.328 5.415 3.328 2.719 0 5.485-2.075 5.485-5.093 0-2.769-2.1-3.873-4.48-4.257 1.525-.209 3.202-1.011 3.637-3.864.118-.77.243-3.51.243-4.168 0-1.787-.866-2.24-3.502-.445C16.046 4.747 13.087 8.686 12 10.8z"/>'
+    ]
+  },
+  youtube: {
+    paths: [
+      '<path fill="currentColor" d="m10 15 5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/>'
+    ]
+  },
+  instagram: {
+    paths: [
+      '<path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>'
+    ]
+  },
+  discord: {
+    paths: [
+      '<path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>'
+    ]
+  },
+  mastodon: {
+    paths: [
+      '<path fill="currentColor" d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-5.288.309C3.882.692 1.496 2.518.915 5.126.312 7.837.18 11.03.208 14.123c.038 4.225.32 8.435 3.018 10.158 2.378 1.517 4.966 1.636 7.234 1.516.326-.017.652-.042.977-.075 2.102-.213 3.998-.946 4.094-1.003l.035-.022.016-.039a.4.4 0 0 0-.154-.48l-.048-.03a.4.4 0 0 0-.495.061c-.04.035-1.745 1.442-4.43 1.58-.29.015-.58.024-.872.026-2.073.014-4.32-.234-5.007-1.758-.335-.742-.455-1.634-.482-2.637a23.957 23.957 0 0 0 6.643.916c1.478 0 2.923-.11 4.316-.33 3.902-.617 7.07-2.73 7.625-5.918.776-4.453.693-8.88.243-11.756zM17.9 14.508h-2.585v-6.3c0-1.32-.56-1.99-1.68-1.99-1.24 0-1.86.8-1.86 2.39v3.456H9.22V8.608c0-1.59-.62-2.39-1.86-2.39-1.12 0-1.68.67-1.68 1.99v6.3H3.094V8.406c0-1.32.336-2.37 1.008-3.15.672-.78 1.564-1.18 2.676-1.18 1.288 0 2.274.49 2.946 1.47l.635 1.066.635-1.066c.672-.98 1.658-1.47 2.946-1.47 1.112 0 2.004.4 2.676 1.18.672.78 1.008 1.83 1.008 3.15v6.102z"/>'
+    ]
+  },
+  threads: {
+    paths: [
+      '<path fill="currentColor" d="M12.186 24c-3.415 0-6.257-1.205-8.221-3.487C2.08 18.337 1.09 15.228 1.026 11.27.954 6.84 2.247 3.518 4.773 1.833 6.657.578 9.176-.029 12.261.001c3.218.032 5.867.734 7.873 2.086 2.083 1.404 3.327 3.493 3.7 6.208.204 1.488.084 3.064-.356 4.685-.688 2.532-2.072 4.676-4.004 6.201-1.748 1.38-3.87 2.158-6.136 2.25-1.85.074-3.593-.326-5.041-1.157-1.789-1.027-2.903-2.618-3.138-4.48-.28-2.22.613-4.225 2.45-5.498 1.492-1.033 3.527-1.574 5.884-1.563 1.436.007 2.766.212 3.953.609-.09-1.483-.538-2.636-1.332-3.426-.957-.954-2.37-1.442-4.084-1.451h-.061c-1.52 0-2.822.404-3.872 1.201-.845.642-1.393 1.543-1.63 2.68l-2.67-.547c.36-1.722 1.219-3.13 2.553-4.184C7.23 2.133 9.24 1.523 11.455 1.523h.084c2.518.013 4.636.786 6.126 2.235 1.448 1.41 2.23 3.468 2.263 5.952l-.004.288c.683.473 1.32.999 1.905 1.575.05.05.097.102.144.155 1.567-2.15 2.193-4.757 1.815-7.538-.456-3.32-2.046-5.875-4.601-7.387C17.067.876 13.91.037 10.155.001 6.549-.034 3.61.71 1.408 2.213-1.542 4.228-3.084 8.083-3.003 13.26c.075 4.77 1.295 8.528 3.626 11.171C2.935 27.062 6.37 28.5 10.46 28.5c3.276 0 6.136-.934 8.497-2.776 2.259-1.764 3.864-4.225 4.64-7.117.472-1.756.593-3.477.362-5.116-.43-3.064-1.89-5.46-4.224-6.932-2.176-1.373-5.068-2.093-8.594-2.13-3.896-.041-7.072.825-9.44 2.576C-1.077 8.948-2.48 11.49-2.52 14.773c-.042 3.464 1.488 6.447 4.195 8.183 1.83 1.173 4.12 1.762 6.621 1.704 2.502-.058 4.793-.852 6.624-2.298 1.706-1.347 2.92-3.21 3.51-5.385.34-1.25.437-2.46.29-3.593-.243-1.87-1.127-3.33-2.556-4.224-.564-.354-1.19-.646-1.866-.872.235 1.542.259 3.076.071 4.56-.445 3.515-2.613 5.753-5.795 5.986-1.594.117-3.136-.353-4.343-1.325-1.242-1-1.884-2.434-1.76-3.935.15-1.82 1.346-3.252 3.284-3.93 1.116-.39 2.378-.588 3.751-.59h.036c1.197.006 2.31.18 3.308.52-.083.74-.236 1.467-.457 2.164-.678 2.14-2.186 3.486-4.246 3.79-.17.025-.34.038-.511.038-1.286 0-2.392-.612-2.756-1.597-.333-.902-.132-1.956.55-2.887.674-.919 1.745-1.464 3.016-1.534.33-.018.66-.011.983.022.062.006.124.015.185.025.26-.78.368-1.583.32-2.395-.094-1.59-.854-2.825-2.138-3.477-1.077-.546-2.47-.798-4.03-.73z\"/>'
+    ]
+  },
+
+  // Interface & Theme
+  sun: {
+    paths: [
+      '<circle cx="12" cy="12" r="4" fill="currentColor"/>',
+      '<path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m14.14-14.14l-1.41 1.41"/>'
+    ]
+  },
+  moon: {
+    stroke: true,
+    paths: [
+      '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  globe: {
+    paths: [
+      '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<path stroke="currentColor" stroke-width="2" d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none"/>'
+    ]
+  },
+  mail: {
+    stroke: true,
+    paths: [
+      '<rect width="20" height="16" x="2" y="4" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  calendar: {
+    stroke: true,
+    paths: [
+      '<rect width="18" height="18" x="3" y="4" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<line x1="16" x2="16" y1="2" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<line x1="8" x2="8" y1="2" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<line x1="3" x2="21" y1="10" y2="10" stroke="currentColor" stroke-width="2"/>'
+    ]
+  },
+  clock: {
+    stroke: true,
+    paths: [
+      '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  },
+  apple: {
+    paths: [
+      '<path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.82 1.11-1.96.99-3.1-.96.04-2.12.64-2.8 1.44-.6.69-1.12 1.83-.98 2.95 1.07.08 2.15-.55 2.79-1.29z"/>'
+    ]
+  },
+  music: {
+    stroke: true,
+    paths: [
+      '<path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2" fill="none"/>'
+    ]
+  },
+  message: {
+    stroke: true,
+    paths: [
+      '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  sparkles: {
+    stroke: true,
+    paths: [
+      '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<path d="M5 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<path d="M19 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  laptop: {
+    stroke: true,
+    paths: [
+      '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  server: {
+    stroke: true,
+    paths: [
+      '<rect width="20" height="8" x="2" y="2" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<rect width="20" height="8" x="2" y="14" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<line x1="6" x2="6.01" y1="6" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<line x1="6" x2="6.01" y1="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  monitor: {
+    stroke: true,
+    paths: [
+      '<rect width="20" height="14" x="2" y="3" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<line x1="8" x2="16" y1="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<line x1="12" x2="12" y1="17" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  smartphone: {
+    stroke: true,
+    paths: [
+      '<rect width="14" height="20" x="5" y="2" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<line x1="12" x2="12.01" y1="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  keyboard: {
+    stroke: true,
+    paths: [
+      '<rect width="20" height="16" x="2" y="4" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M6 12h.001M10 12h.001M14 12h.001M18 12h.001M7 16h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  mouse: {
+    stroke: true,
+    paths: [
+      '<rect width="14" height="20" x="5" y="2" rx="7" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<line x1="12" x2="12" y1="6" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  mic: {
+    stroke: true,
+    paths: [
+      '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  },
+  cpu: {
+    stroke: true,
+    paths: [
+      '<rect width="16" height="16" x="4" y="4" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<rect width="6" height="6" x="9" y="9" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<path d="M15 2v2M9 2v2M20 15h2M20 9h2M9 20v2M15 20v2M2 9h2M2 15h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  "hard-drive": {
+    stroke: true,
+    paths: [
+      '<line x1="22" x2="2" y1="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<line x1="6" x2="6.01" y1="16" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<line x1="10" x2="10.01" y1="16" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    ]
+  },
+  headphones: {
+    stroke: true,
+    paths: [
+      '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  watch: {
+    stroke: true,
+    paths: [
+      '<circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2" fill="none"/>',
+      '<polyline points="12 9 12 12 13.5 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.34a2 2 0 0 1 1.82l.35 3.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+
+  // Interface Controls
+  "chevron-down": {
+    stroke: true,
+    paths: [
+      '<path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  },
+  "arrow-up-right": {
+    stroke: true,
+    paths: [
+      '<line x1="7" y1="17" x2="17" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+      '<polyline points="7 7 17 7 17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  "external-link": {
+    stroke: true,
+    paths: [
+      '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<polyline points="15 3 21 3 21 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<line x1="10" x2="21" y1="14" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  },
+  tag: {
+    stroke: true,
+    paths: [
+      '<path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<circle cx="7.5" cy="7.5" r=".5" fill="currentColor" stroke="currentColor" stroke-width="1.5"/>'
+    ]
+  },
+  "book-open": {
+    stroke: true,
+    paths: [
+      '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  code: {
+    stroke: true,
+    paths: [
+      '<polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+      '<polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  },
+  terminal: {
+    stroke: true,
+    paths: [
+      '<polyline points="4 17 10 11 4 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+      '<line x1="12" x2="20" y1="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  },
+  palette: {
+    stroke: true,
+    paths: [
+      '<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>',
+      '<circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>',
+      '<circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>',
+      '<circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>',
+      '<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    ]
+  },
+  newspaper: {
+    stroke: true,
+    paths: [
+      '<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      '<path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ]
+  }
+};
+
+const iconData = icons[name] || icons["arrow-up-right"];
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={iconData.viewBox || "0 0 24 24"}
+  class={className}
+  fill={iconData.fill || (iconData.stroke ? "none" : "currentColor")}
+  stroke={iconData.stroke ? "currentColor" : "none"}
+  aria-hidden="true"
+>
+  <Fragment set:html={iconData.paths.join('')} />
+</svg>

@@ -1,0 +1,166 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  url: string;
+  github?: string;
+  releases?: string;
+  description?: string;
+  icon?: string;
+  highlight?: boolean;
+}
+
+const { title, url, github, releases, description, icon, highlight = false } = Astro.props;
+const isExternal = url.startsWith('http://') || url.startsWith('https://');
+
+// Clean domain display for URLs
+let displayUrl = "";
+try {
+  if (isExternal) {
+    const parsed = new URL(url);
+    displayUrl = parsed.hostname.replace('www.', '');
+  }
+} catch {
+  displayUrl = "";
+}
+
+// Dual link condition: both github and url are defined and distinct
+const hasDualLink = Boolean(github && url && github !== url);
+
+const isGitHubLink = displayUrl === 'github.com';
+const isInstagramLink = displayUrl === 'instagram.com';
+const isTwitterLink = displayUrl === 'x.com' || displayUrl === 'twitter.com';
+---
+
+<div
+  class={`group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 p-3.5 sm:p-4 rounded-xl transition-all duration-150 text-left w-full ${
+    highlight
+      ? "bg-white dark:bg-[#141417] border border-zinc-300/80 dark:border-zinc-700/80 hover:border-zinc-400 dark:hover:border-zinc-600 shadow-xs"
+      : "bg-white dark:bg-[#121215] border border-zinc-200/70 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/50 dark:hover:bg-[#16161a]"
+  }`}
+>
+  <div class="flex items-start gap-3.5 min-w-0 flex-1">
+    {/* Icon */}
+    {icon && (
+      <div
+        class={`shrink-0 flex items-center justify-center w-9 h-9 rounded-lg mt-0.5 transition-colors ${
+          highlight
+            ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+            : "bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white"
+        }`}
+      >
+        <Icon name={icon} class="w-4 h-4" />
+      </div>
+    )}
+
+    {/* Main content */}
+    <div class="flex-1 min-w-0 pr-1">
+      <div>
+        <a
+          href={url}
+          target={isExternal ? "_blank" : "_self"}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          class="font-medium text-sm sm:text-base text-zinc-900 dark:text-zinc-100 group-hover:text-black dark:group-hover:text-white transition-colors cursor-pointer after:absolute after:inset-0 after:z-0"
+        >
+          {title}
+        </a>
+      </div>
+
+      {description && (
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+          {description}
+        </p>
+      )}
+    </div>
+  </div>
+
+  {/* Actions / Buttons */}
+  <div class="relative z-10 shrink-0 flex items-center gap-1.5 self-end sm:self-center">
+    {releases ? (
+      <>
+        {(github || isGitHubLink) && (
+          <a
+            href={github || url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`View ${title} source code on GitHub`}
+            aria-label={`View ${title} source code on GitHub`}
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200/80 dark:border-zinc-700/80 transition-colors cursor-pointer"
+          >
+            <Icon name="github" class="w-3.5 h-3.5" />
+            <span>Code</span>
+          </a>
+        )}
+
+        <a
+          href={releases}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`View ${title} releases`}
+          aria-label={`View ${title} releases`}
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 hover:text-black dark:hover:text-white bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300/80 dark:border-zinc-700 transition-colors cursor-pointer"
+        >
+          <Icon name="tag" class="w-3.5 h-3.5" />
+          <span>Releases</span>
+          <Icon name="arrow-up-right" class="w-3 h-3 opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </a>
+      </>
+    ) : hasDualLink ? (
+      <>
+        <a
+          href={github}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`View ${title} source code on GitHub`}
+          aria-label={`View ${title} source code on GitHub`}
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200/80 dark:border-zinc-700/80 transition-colors cursor-pointer"
+        >
+          <Icon name="github" class="w-3.5 h-3.5" />
+          <span>Code</span>
+        </a>
+
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`Visit ${title} (${displayUrl})`}
+          aria-label={`Visit ${title} (${displayUrl})`}
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 hover:text-black dark:hover:text-white bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300/80 dark:border-zinc-700 transition-colors cursor-pointer"
+        >
+          <span>Visit</span>
+          <Icon name="arrow-up-right" class="w-3 h-3 opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </a>
+      </>
+    ) : (
+      <a
+        href={url}
+        target={isExternal ? "_blank" : "_self"}
+        rel={isExternal ? "noopener noreferrer" : undefined}
+        title={`Open ${title}`}
+        aria-label={`Open ${title}`}
+        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 hover:text-black dark:hover:text-white bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300/80 dark:border-zinc-700 transition-colors cursor-pointer"
+      >
+        {isGitHubLink ? (
+          <>
+            <Icon name="github" class="w-3.5 h-3.5" />
+            <span>GitHub</span>
+          </>
+        ) : isInstagramLink ? (
+          <>
+            <Icon name="instagram" class="w-3.5 h-3.5" />
+            <span>Instagram</span>
+          </>
+        ) : isTwitterLink ? (
+          <>
+            <Icon name="twitter" class="w-3.5 h-3.5" />
+            <span>Twitter</span>
+          </>
+        ) : (
+          <span>{displayUrl || "Open"}</span>
+        )}
+        <Icon name="arrow-up-right" class="w-3 h-3 opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+      </a>
+    )}
+  </div>
+</div>

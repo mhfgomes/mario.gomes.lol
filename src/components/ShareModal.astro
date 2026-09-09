@@ -1,0 +1,132 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  url: string;
+}
+
+const { title, url } = Astro.props;
+---
+
+<div class="relative inline-flex items-center">
+  <button
+    id="share-btn"
+    type="button"
+    aria-label="Share this profile"
+    data-url={url}
+    data-title={title}
+    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700/80 text-zinc-600 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-700/60 shadow-xs transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/40 cursor-pointer"
+    title="Share or copy profile link"
+  >
+    <!-- Default Share Icon -->
+    <span id="share-icon-default" class="transition-transform duration-200">
+      <Icon name="share-2" class="w-4 h-4" />
+    </span>
+
+    <!-- Success Check Icon -->
+    <span id="share-icon-success" class="hidden text-emerald-500 dark:text-emerald-400 transition-transform duration-200 scale-110">
+      <Icon name="check" class="w-4 h-4" />
+    </span>
+  </button>
+
+  <!-- Clean dropdown feedback bubble below the button -->
+  <div
+    id="share-toast"
+    role="status"
+    aria-live="polite"
+    class="absolute right-0 top-full mt-2 pointer-events-none opacity-0 translate-y-1 transition-all duration-200 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-xl text-xs font-medium whitespace-nowrap border border-zinc-800 dark:border-zinc-200"
+  >
+    <Icon name="check" class="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600 shrink-0" />
+    <span id="share-toast-text">Link copied!</span>
+  </div>
+</div>
+
+<script is:inline>
+  const setupShare = () => {
+    const btn = document.getElementById('share-btn');
+    const toast = document.getElementById('share-toast');
+    const toastText = document.getElementById('share-toast-text');
+    const iconDefault = document.getElementById('share-icon-default');
+    const iconSuccess = document.getElementById('share-icon-success');
+    if (!btn) return;
+
+    let resetTimer;
+
+    const triggerSuccessFeedback = (message = 'Link copied!') => {
+      if (toastText) toastText.textContent = message;
+
+      // Show toast below button
+      if (toast) {
+        toast.classList.remove('opacity-0', 'translate-y-1');
+        toast.classList.add('opacity-100', 'translate-y-0');
+      }
+
+      // Swap button icon to check
+      if (iconDefault && iconSuccess) {
+        iconDefault.classList.add('hidden');
+        iconSuccess.classList.remove('hidden');
+      }
+
+      btn.classList.add('ring-2', 'ring-emerald-500/50');
+
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => {
+        if (toast) {
+          toast.classList.remove('opacity-100', 'translate-y-0');
+          toast.classList.add('opacity-0', 'translate-y-1');
+        }
+        if (iconDefault && iconSuccess) {
+          iconDefault.classList.remove('hidden');
+          iconSuccess.classList.add('hidden');
+        }
+        btn.classList.remove('ring-2', 'ring-emerald-500/50');
+      }, 2000);
+    };
+
+    btn.addEventListener('click', async () => {
+      const shareUrl = window.location.href || btn.dataset.url;
+      const shareTitle = btn.dataset.title || document.title;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: shareTitle,
+            url: shareUrl,
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            return;
+          }
+          // Fall through to clipboard if share failed
+        }
+      }
+
+      // Clipboard fallback
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        triggerSuccessFeedback('Link copied!');
+      } catch (e) {
+        // Fallback for older browsers / iframe permissions
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          triggerSuccessFeedback('Link copied!');
+        } catch (err) {
+          triggerSuccessFeedback('Failed to copy');
+        }
+        document.body.removeChild(textArea);
+      }
+    });
+  };
+
+  setupShare();
+  document.addEventListener('astro:after-swap', setupShare);
+</script>

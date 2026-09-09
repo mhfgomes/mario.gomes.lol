@@ -1,0 +1,469 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProfileHeader from '../components/ProfileHeader.astro';
+import LinkCard from '../components/LinkCard.astro';
+import Icon from '../components/Icon.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import * as profile from '../content/profile.md';
+
+interface Props {
+  initialTab?: 'links' | 'about' | 'hardware';
+}
+
+const { initialTab = 'links' } = Astro.props;
+
+const { frontmatter, Content } = profile;
+const groups = frontmatter.groups || [];
+const hardware = frontmatter.hardware || [];
+const skills = frontmatter.skills || [];
+const socials = frontmatter.socials || [];
+const whatIDo = frontmatter.whatIDo || [];
+
+// Identify multi-item computer/server builds that can be collapsible
+const isCollapsibleCategory = (cat: string) => {
+  const c = (cat || '').toLowerCase();
+  return c.includes('custom build') || c.includes('server') || c.includes('workstation');
+};
+---
+
+<Layout
+  title={`${frontmatter.name} — ${frontmatter.handle || 'Links & About'}`}
+  description={frontmatter.headline || `${frontmatter.name}'s personal links and about me page.`}
+  image={frontmatter.avatar}
+>
+  <div class="flex flex-col space-y-8 sm:space-y-10">
+    {/* Profile Header */}
+    <ProfileHeader
+      name={frontmatter.name}
+      handle={frontmatter.handle}
+      headline={frontmatter.headline}
+      avatar={frontmatter.avatar}
+      location={frontmatter.location}
+      status={frontmatter.status}
+      socials={frontmatter.socials}
+    >
+      <div slot="actions" class="flex items-center">
+        <ThemeToggle />
+      </div>
+    </ProfileHeader>
+
+    {/* Section / Tab Switcher */}
+    <nav aria-label="Page Sections" class="w-full border-b border-zinc-200/80 dark:border-zinc-800/80 flex items-center gap-6">
+      <a
+        id="tab-links"
+        href="/"
+        class:list={[
+          "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
+          initialTab === 'links'
+            ? "active font-medium text-zinc-900 dark:text-white border-zinc-900 dark:border-white"
+            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
+        ]}
+      >
+        Projects & Links
+      </a>
+
+      <a
+        id="tab-about"
+        href="/about"
+        class:list={[
+          "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
+          initialTab === 'about'
+            ? "active font-medium text-zinc-900 dark:text-white border-zinc-900 dark:border-white"
+            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
+        ]}
+      >
+        About
+      </a>
+
+      <a
+        id="tab-hardware"
+        href="/hardware"
+        class:list={[
+          "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
+          initialTab === 'hardware'
+            ? "active font-medium text-zinc-900 dark:text-white border-zinc-900 dark:border-white"
+            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
+        ]}
+      >
+        Hardware
+      </a>
+    </nav>
+
+    {/* Panel 1: Links (Grouped Linktree view) */}
+    <section
+      id="panel-links"
+      class:list={[
+        "w-full space-y-7 transition-opacity duration-200",
+        initialTab !== 'links' && "hidden"
+      ]}
+    >
+      {groups.map((group: any) => (
+        <div class="space-y-3">
+          {group.title && (
+            <h2 class="text-xs font-medium text-zinc-400 dark:text-zinc-500 px-0.5">
+              {group.title}
+            </h2>
+          )}
+          <div class="grid grid-cols-1 gap-2.5">
+            {group.items?.map((item: any) => (
+              <LinkCard
+                title={item.title}
+                url={item.url}
+                github={item.github}
+                releases={item.releases}
+                description={item.description}
+                icon={item.icon}
+                highlight={item.highlight}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    {/* Panel 2: About Me (Markdown rendered view) */}
+    <section
+      id="panel-about"
+      class:list={[
+        "w-full space-y-6 transition-opacity duration-200",
+        initialTab !== 'about' && "hidden"
+      ]}
+    >
+      <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+        <article class="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-zinc-900 dark:prose-a:text-white prose-a:underline hover:prose-a:opacity-80 text-sm sm:text-base leading-relaxed">
+          <Content />
+        </article>
+
+        {/* What I Do Sleek Feature Cards */}
+        {whatIDo.length > 0 && (
+          <div class="mt-8 pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
+            <h3 class="text-base font-semibold text-zinc-900 dark:text-white tracking-tight">
+              What I Do
+            </h3>
+
+            <div class="grid grid-cols-1 gap-2.5">
+              {whatIDo.map((item: any) => (
+                <div class="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-xl bg-zinc-50/70 dark:bg-[#18181b]/70 border border-zinc-200/70 dark:border-zinc-800/80">
+                  {item.icon && (
+                    <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60 shadow-2xs mt-0.5">
+                      <Icon name={item.icon} class="w-4 h-4" />
+                    </div>
+                  )}
+                  <div class="min-w-0 flex-1">
+                    <span class="text-sm font-medium text-zinc-900 dark:text-white block">
+                      {item.title}
+                    </span>
+                    <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Clean Badges / Pills for Tech Stack & Tools */}
+        {skills.length > 0 && (
+          <div class="mt-8 pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-5">
+            <h3 class="text-base font-semibold text-zinc-900 dark:text-white tracking-tight">
+              Tech Stack & Tools
+            </h3>
+
+            <div class="space-y-3.5">
+              {skills.map((skillGroup: any) => (
+                <div class="space-y-2">
+                  <span class="text-xs font-medium text-zinc-400 dark:text-zinc-500 block">
+                    {skillGroup.category}
+                  </span>
+                  <div class="flex flex-wrap gap-1.5">
+                    {skillGroup.items?.map((item: string) => (
+                      <span class="text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-zinc-100/90 dark:bg-zinc-800/80 px-2.5 py-1 rounded-lg border border-zinc-200/70 dark:border-zinc-700/70 select-none">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Let's Connect Interactive Cards */}
+        {socials.length > 0 && (
+          <div class="mt-8 pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
+            <div>
+              <h3 class="text-base font-semibold text-zinc-900 dark:text-white tracking-tight">
+                Let's Connect
+              </h3>
+              <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                Feel free to reach out to collaborate, discuss a project, or just say hello.
+              </p>
+            </div>
+
+            <div class:list={[
+              "grid gap-2.5",
+              socials.length === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
+            ]}>
+              {socials.map((social: any) => {
+                const isProfileLink =
+                  social.url?.includes('github.com') ||
+                  social.url?.includes('instagram.com') ||
+                  social.url?.includes('x.com') ||
+                  social.url?.includes('twitter.com');
+                const handle = isProfileLink
+                  ? `@${social.url.split('/').filter(Boolean).pop()}`
+                  : social.name;
+
+                return (
+                  <a
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex items-center justify-between p-3.5 rounded-xl bg-zinc-50/70 dark:bg-[#18181b]/70 border border-zinc-200/70 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-800/80 transition-all cursor-pointer"
+                  >
+                    <div class="flex items-center gap-3 min-w-0">
+                      <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60 shadow-2xs group-hover:scale-105 transition-transform">
+                        <Icon name={social.icon} class="w-4 h-4" />
+                      </div>
+                      <div class="min-w-0">
+                        <span class="text-sm font-medium text-zinc-900 dark:text-white block group-hover:text-zinc-600 dark:group-hover:text-zinc-200 transition-colors">
+                          {social.name}
+                        </span>
+                        <span class="text-xs text-zinc-400 dark:text-zinc-500 block truncate">
+                          {handle}
+                        </span>
+                      </div>
+                    </div>
+                    <span class="text-xs text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200 transition-transform group-hover:translate-x-0.5">
+                      ↗
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div class="mt-8 pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 flex items-center justify-between">
+          <a
+            href="/"
+            class="back-to-links text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:underline inline-flex items-center gap-1 cursor-pointer"
+          >
+            ← Back to home
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* Panel 3: Owned Hardware (Full-width clean rows, no text truncation) */}
+    <section
+      id="panel-hardware"
+      class:list={[
+        "w-full space-y-5 transition-opacity duration-200",
+        initialTab !== 'hardware' && "hidden"
+      ]}
+    >
+      {hardware.map((categoryGroup: any) => {
+        const isCollapsible = isCollapsibleCategory(categoryGroup.category);
+        const itemCount = categoryGroup.items?.length || 0;
+        const iconName = categoryGroup.category?.toLowerCase().includes('server') ? 'server' : 'cpu';
+
+        return isCollapsible ? (
+          /* Collapsible System Accordion */
+          <details class="group rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden shadow-2xs transition-all">
+            <summary class="flex items-center justify-between gap-3.5 p-4 sm:p-4.5 cursor-pointer list-none select-none hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors focus:outline-hidden">
+              <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                <div class="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300">
+                  <Icon name={iconName} class="w-4 h-4" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="font-medium text-sm sm:text-base text-zinc-900 dark:text-zinc-100 block">
+                    {categoryGroup.category}
+                  </span>
+                  <span class="text-xs text-zinc-400 dark:text-zinc-500 block truncate">
+                    {categoryGroup.items?.[0]?.name}
+                    {categoryGroup.items?.[1] && ` · ${categoryGroup.items[1].name}`}
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800/80 px-2 py-0.5 rounded-md border border-zinc-200/60 dark:border-zinc-700/60">
+                  {itemCount} parts
+                </span>
+                <div class="w-5 h-5 flex items-center justify-center text-zinc-400 dark:text-zinc-500 transition-transform duration-200 group-open:rotate-180">
+                  <Icon name="chevron-down" class="w-4 h-4" />
+                </div>
+              </div>
+            </summary>
+
+            <div class="p-3 sm:p-3.5 pt-0 border-t border-zinc-100 dark:border-zinc-800/60 space-y-1.5 mt-2">
+              <div class="grid grid-cols-1 gap-1.5">
+                {categoryGroup.items?.map((item: any) => (
+                  <div class="flex items-center justify-between gap-3 p-2.5 sm:p-3 rounded-lg bg-zinc-50/70 dark:bg-[#18181b]/70 border border-zinc-200/50 dark:border-zinc-800/50">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                      {item.icon && (
+                        <div class="shrink-0 flex items-center justify-center w-7 h-7 rounded-md bg-white dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 shadow-2xs">
+                          <Icon name={item.icon} class="w-3.5 h-3.5" />
+                        </div>
+                      )}
+                      <div class="flex-1 min-w-0 pr-2">
+                        <span class="text-sm font-medium text-zinc-800 dark:text-zinc-200 block break-words">
+                          {item.name}
+                        </span>
+                        {item.description && (
+                          <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 break-words">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {item.specs && (
+                      <span class="shrink-0 text-xs font-medium text-zinc-600 dark:text-zinc-400 bg-white/90 dark:bg-zinc-800/90 px-2.5 py-1 rounded border border-zinc-200/60 dark:border-zinc-700/60 whitespace-nowrap">
+                        {item.specs}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        ) : (
+          /* Standard Direct Category (Laptops, Displays, Peripherals) */
+          <div class="space-y-3">
+            {categoryGroup.category && (
+              <h2 class="text-xs font-medium text-zinc-400 dark:text-zinc-500 px-0.5">
+                {categoryGroup.category}
+              </h2>
+            )}
+            <div class="grid grid-cols-1 gap-2.5">
+              {categoryGroup.items?.map((item: any) => (
+                <div class="flex items-center justify-between gap-3.5 p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200/70 dark:border-zinc-800/80">
+                  <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                    {item.icon && (
+                      <div class="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300">
+                        <Icon name={item.icon} class="w-4 h-4" />
+                      </div>
+                    )}
+                    <div class="flex-1 min-w-0 pr-2">
+                      <span class="font-medium text-sm sm:text-base text-zinc-900 dark:text-zinc-100 block break-words">
+                        {item.name}
+                      </span>
+                      {item.description && (
+                        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed break-words">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {item.specs && (
+                    <div class="shrink-0 self-center">
+                      <span class="text-xs font-medium text-zinc-600 dark:text-zinc-400 bg-zinc-100/90 dark:bg-zinc-800/90 px-2.5 py-1 rounded-lg border border-zinc-200/80 dark:border-zinc-700/80 whitespace-nowrap">
+                        {item.specs}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      <div class="pt-3">
+        <a
+          href="/"
+          class="back-to-links text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:underline inline-flex items-center gap-1 cursor-pointer"
+        >
+          ← Back to home
+        </a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script is:inline>
+  const setupTabs = () => {
+    const tabLinks = document.getElementById('tab-links');
+    const tabAbout = document.getElementById('tab-about');
+    const tabHardware = document.getElementById('tab-hardware');
+    const panelLinks = document.getElementById('panel-links');
+    const panelAbout = document.getElementById('panel-about');
+    const panelHardware = document.getElementById('panel-hardware');
+    const backButtons = document.querySelectorAll('.back-to-links');
+
+    if (!tabLinks || !tabAbout || !tabHardware || !panelLinks || !panelAbout || !panelHardware) return;
+
+    const tabs = [
+      { name: 'links', path: '/', tab: tabLinks, panel: panelLinks },
+      { name: 'about', path: '/about', tab: tabAbout, panel: panelAbout },
+      { name: 'hardware', path: '/hardware', tab: tabHardware, panel: panelHardware }
+    ];
+
+    const activeClasses = ['border-zinc-900', 'dark:border-white', 'text-zinc-900', 'dark:text-white', 'font-medium', 'active'];
+    const inactiveClasses = ['border-transparent', 'text-zinc-400', 'dark:text-zinc-500'];
+
+    const showTab = (selectedName, updateUrl = true) => {
+      const selected = tabs.find(t => t.name === selectedName) || tabs[0];
+
+      tabs.forEach(({ name, tab, panel }) => {
+        if (name === selected.name) {
+          tab.classList.add(...activeClasses);
+          tab.classList.remove(...inactiveClasses);
+          panel.classList.remove('hidden');
+        } else {
+          tab.classList.remove(...activeClasses);
+          tab.classList.add(...inactiveClasses);
+          panel.classList.add('hidden');
+        }
+      });
+
+      if (updateUrl && window.location.pathname !== selected.path) {
+        history.pushState(null, '', selected.path);
+      }
+    };
+
+    tabLinks.addEventListener('click', (e) => {
+      e.preventDefault();
+      showTab('links');
+    });
+
+    tabAbout.addEventListener('click', (e) => {
+      e.preventDefault();
+      showTab('about');
+    });
+
+    tabHardware.addEventListener('click', (e) => {
+      e.preventDefault();
+      showTab('hardware');
+    });
+
+    backButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showTab('links');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    window.addEventListener('popstate', () => {
+      const path = window.location.pathname.replace(/\/$/, '') || '/';
+      if (path === '/about') showTab('about', false);
+      else if (path === '/hardware') showTab('hardware', false);
+      else showTab('links', false);
+    });
+
+    // Check initial path
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
+    if (path === '/about') showTab('about', false);
+    else if (path === '/hardware') showTab('hardware', false);
+    else if (window.location.hash === '#about') showTab('about', true);
+    else if (window.location.hash === '#hardware') showTab('hardware', true);
+  };
+
+  setupTabs();
+  document.addEventListener('astro:after-swap', setupTabs);
+</script>

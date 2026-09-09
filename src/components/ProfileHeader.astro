@@ -1,0 +1,118 @@
+---
+import Icon from './Icon.astro';
+
+export interface SocialLink {
+  name: string;
+  url: string;
+  icon?: string;
+  label?: string;
+}
+
+export interface Status {
+  text?: string;
+  indicator?: 'green' | 'blue' | 'purple' | 'amber' | 'red';
+}
+
+interface Props {
+  name: string;
+  handle?: string;
+  headline?: string;
+  avatar?: string;
+  location?: string;
+  status?: Status;
+  socials?: SocialLink[];
+}
+
+const {
+  name,
+  handle,
+  headline,
+  avatar = "/avatar.svg",
+  location,
+  status,
+  socials = []
+} = Astro.props;
+
+const indicatorColors = {
+  green: "bg-emerald-500",
+  blue: "bg-blue-500",
+  purple: "bg-purple-500",
+  amber: "bg-amber-500",
+  red: "bg-rose-500",
+};
+
+const activeIndicator = status?.indicator && indicatorColors[status.indicator] ? indicatorColors[status.indicator] : "bg-emerald-500";
+---
+
+<header class="w-full flex flex-col items-start text-left space-y-4">
+  <div class="w-full flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3.5 sm:gap-4 min-w-0">
+      <div class="relative shrink-0">
+        <img
+          src={avatar}
+          alt={name}
+          class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover bg-zinc-100 dark:bg-zinc-800 ring-1 ring-zinc-900/10 dark:ring-white/10 shadow-xs"
+          loading="eager"
+        />
+      </div>
+
+      <div class="min-w-0">
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate">
+          {name}
+        </h1>
+        <div class="flex items-center gap-2 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          {handle && (
+            <span class="font-medium text-zinc-700 dark:text-zinc-300">
+              {handle.startsWith('@') ? handle : `@${handle}`}
+            </span>
+          )}
+          {location && (
+            <>
+              <span class="text-zinc-300 dark:text-zinc-700">·</span>
+              <span>{location}</span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Top utility controls (Share, Theme) aligned with the profile */}
+    <div class="shrink-0 flex items-center gap-2 self-center">
+      <slot name="actions" />
+    </div>
+  </div>
+
+  {/* Status pill badge (if provided) */}
+  {status?.text && (
+    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+      <span class={`w-1.5 h-1.5 rounded-full ${activeIndicator} shrink-0`}></span>
+      <span>{status.text}</span>
+    </div>
+  )}
+
+  {/* Headline / Bio */}
+  {headline && (
+    <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-lg">
+      {headline}
+    </p>
+  )}
+
+  {/* Quick Social Action Chips */}
+  {socials && socials.length > 0 && (
+    <div class="flex flex-wrap items-center gap-2 pt-0.5">
+      {socials.map((social) => (
+        <a
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={social.label || social.name}
+          title={social.label || social.name}
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100/90 dark:bg-zinc-900/90 hover:bg-zinc-200/80 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
+        >
+          <Icon name={social.icon || social.name.toLowerCase()} class="w-3.5 h-3.5" />
+          <span>{social.name}</span>
+        </a>
+      ))}
+    </div>
+  )}
+</header>

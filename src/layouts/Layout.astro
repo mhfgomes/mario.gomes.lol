@@ -1,0 +1,89 @@
+---
+import '../styles/global.css';
+import { siteConfig } from '../site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  image = siteConfig.socialMeta.ogImage || "/avatar.svg",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, siteConfig.url);
+const ogImageURL = new URL(image, siteConfig.url);
+
+const hasFooter = Boolean(siteConfig.footer?.customText || siteConfig.footer?.showPoweredBy);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Meta Tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="author" content={siteConfig.author} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content={siteConfig.socialMeta.twitterCard} />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    {siteConfig.handle && <meta name="twitter:creator" content={siteConfig.handle} />}
+
+    <!-- Color Scheme & Theme Initialization Script (prevents FOUC) -->
+    <script is:inline>
+      (function() {
+        const storedTheme = localStorage.getItem('theme');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (storedTheme === 'dark' || (!storedTheme && systemDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-[#fafafa] text-zinc-900 dark:bg-[#0c0c0e] dark:text-zinc-100 min-h-screen flex flex-col font-sans antialiased selection:bg-zinc-800 selection:text-white dark:selection:bg-zinc-200 dark:selection:text-zinc-900">
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-xl w-full mx-auto px-5 pt-8 sm:pt-14 pb-20 sm:pb-24">
+      <slot />
+    </main>
+
+    {/* Optional Footer */}
+    {hasFooter && (
+      <footer class="mt-auto py-8 text-center text-xs text-zinc-400 dark:text-zinc-500 border-t border-zinc-200/60 dark:border-zinc-800/60">
+        <div class="max-w-xl mx-auto px-5 flex flex-col items-center gap-2">
+          {siteConfig.footer?.customText && (
+            <p>{siteConfig.footer.customText}</p>
+          )}
+          {siteConfig.footer?.showPoweredBy && (
+            <p class="text-zinc-400/80 dark:text-zinc-500/80">
+              Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-zinc-600 dark:hover:text-zinc-300">Astro</a>
+            </p>
+          )}
+        </div>
+      </footer>
+    )}
+  </body>
+</html>
