@@ -85,7 +85,7 @@ const { title, url } = Astro.props;
     };
 
     btn.addEventListener('click', async () => {
-      const shareUrl = window.location.href || btn.dataset.url;
+      const shareUrl = btn.dataset.url || window.location.href;
       const shareTitle = btn.dataset.title || document.title;
 
       if (navigator.share) {
