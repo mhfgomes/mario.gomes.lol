@@ -21,9 +21,6 @@ import Icon from './Icon.astro';
     const toggleBtn = document.getElementById('theme-toggle');
     if (!toggleBtn) return;
 
-    if (toggleBtn.dataset.bound === 'true') return;
-    toggleBtn.dataset.bound = 'true';
-
     toggleBtn.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -31,5 +28,4 @@ import Icon from './Icon.astro';
   };
 
   setupThemeToggle();
-  document.addEventListener('astro:after-swap', setupThemeToggle);
 </script>
