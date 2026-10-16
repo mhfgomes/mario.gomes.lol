@@ -53,7 +53,10 @@ const hasFooter = Boolean(siteConfig.footer?.customText || siteConfig.footer?.sh
     <!-- Color Scheme & Theme Initialization Script (prevents FOUC) -->
     <script is:inline>
       (function() {
-        const storedTheme = localStorage.getItem('theme');
+        let storedTheme = null;
+        try {
+          storedTheme = localStorage.getItem('theme');
+        } catch (e) {}
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (storedTheme === 'dark' || (!storedTheme && systemDark)) {
           document.documentElement.classList.add('dark');
