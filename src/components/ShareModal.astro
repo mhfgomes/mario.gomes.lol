@@ -108,21 +108,7 @@ const { title, url } = Astro.props;
         await navigator.clipboard.writeText(shareUrl);
         triggerSuccessFeedback('Link copied!');
       } catch (e) {
-        // Fallback for older browsers / iframe permissions
-        const textArea = document.createElement('textarea');
-        textArea.value = shareUrl;
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        try {
-          document.execCommand('copy');
-          triggerSuccessFeedback('Link copied!');
-        } catch (err) {
-          triggerSuccessFeedback('Failed to copy');
-        }
-        document.body.removeChild(textArea);
+        triggerSuccessFeedback('Failed to copy');
       }
     });
   };
