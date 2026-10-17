@@ -75,13 +75,13 @@ const hasFooter = Boolean(siteConfig.footer?.customText || siteConfig.footer?.sh
 
     {/* Optional Footer */}
     {hasFooter && (
-      <footer class="mt-auto py-8 text-center text-xs text-zinc-400 dark:text-zinc-500 border-t border-zinc-200/60 dark:border-zinc-800/60">
+      <footer class="mt-auto py-8 text-center text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div class="max-w-xl mx-auto px-5 flex flex-col items-center gap-2">
           {siteConfig.footer?.customText && (
             <p>{siteConfig.footer.customText}</p>
           )}
           {siteConfig.footer?.showPoweredBy && (
-            <p class="text-zinc-400/80 dark:text-zinc-500/80">
+            <p class="text-zinc-500 dark:text-zinc-400">
               Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-zinc-600 dark:hover:text-zinc-300">Astro</a>
             </p>
           )}
