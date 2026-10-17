@@ -51,14 +51,15 @@ const hasFooter = Boolean(siteConfig.footer?.customText || siteConfig.footer?.sh
     {siteConfig.handle && <meta name="twitter:creator" content={siteConfig.handle} />}
 
     <!-- Color Scheme & Theme Initialization Script (prevents FOUC) -->
-    <script is:inline>
+    <script is:inline define:vars={{ defaultMode: siteConfig.theme?.defaultMode ?? 'system' }}>
       (function() {
         let storedTheme = null;
         try {
           storedTheme = localStorage.getItem('theme');
         } catch (e) {}
+        const mode = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : defaultMode;
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (storedTheme === 'dark' || (!storedTheme && systemDark)) {
+        if (mode === 'dark' || (mode === 'system' && systemDark)) {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
