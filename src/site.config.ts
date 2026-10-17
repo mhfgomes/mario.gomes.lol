@@ -9,6 +9,7 @@ export interface SiteConfig {
   url: string;
   author: string;
   handle?: string;
+  twitterHandle?: string;
   avatar?: string;
   theme?: {
     defaultMode?: 'dark' | 'light' | 'system';
@@ -31,6 +32,7 @@ export const siteConfig: SiteConfig = {
   url: "https://mario.gomes.lol",
   author: "Mário Gomes",
   handle: "@mhfgomes",
+  twitterHandle: "@mario_hfg",
   avatar: "/avatar.jpg",
 
   // Theme settings
