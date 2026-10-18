@@ -14,7 +14,7 @@ export interface SiteConfig {
     defaultMode?: 'dark' | 'light' | 'system';
     accentColor?: 'indigo' | 'violet' | 'emerald' | 'blue' | 'rose' | 'amber';
   };
-  socialMeta?: {
+  socialMeta: {
     twitterCard?: string;
     ogImage?: string;
   };
