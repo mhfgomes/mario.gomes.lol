@@ -5,6 +5,7 @@ import LinkCard from '../components/LinkCard.astro';
 import Icon from '../components/Icon.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import * as profile from '../content/profile.md';
+import { siteConfig } from '../site.config';
 
 interface Props {
   initialTab?: 'links' | 'about' | 'hardware';
@@ -13,6 +14,20 @@ interface Props {
 const { initialTab = 'links' } = Astro.props;
 
 const { frontmatter, Content } = profile;
+const pageMetadata = {
+  links: {
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
+  about: {
+    title: `About — ${siteConfig.title}`,
+    description: `Learn about ${frontmatter.name}, his background, skills, and work.`,
+  },
+  hardware: {
+    title: `Hardware — ${siteConfig.title}`,
+    description: `Explore ${frontmatter.name}'s computers, servers, and hardware setup.`,
+  },
+}[initialTab];
 const groups = frontmatter.groups || [];
 const hardware = frontmatter.hardware || [];
 const skills = frontmatter.skills || [];
@@ -27,8 +42,8 @@ const isCollapsibleCategory = (cat: string) => {
 ---
 
 <Layout
-  title={`${frontmatter.name} — ${frontmatter.handle || 'Links & About'}`}
-  description={frontmatter.headline || `${frontmatter.name}'s personal links and about me page.`}
+  title={pageMetadata.title}
+  description={pageMetadata.description}
   image={frontmatter.avatar}
 >
   <div class="flex flex-col space-y-8 sm:space-y-10">

@@ -27,7 +27,7 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   // Website metadata
-  title: "Mário Gomes — About & Links",
+  title: "Mário Gomes",
   description: "Personal link-in-bio and about me page. Software engineer, builder, and open-source enthusiast.",
   url: "https://mario.gomes.lol",
   author: "Mário Gomes",
