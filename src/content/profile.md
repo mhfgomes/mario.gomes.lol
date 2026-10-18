@@ -22,12 +22,15 @@ avatar: "/avatar.jpg"
 socials:
   - name: "GitHub"
     url: "https://github.com/mhfgomes"
+    handle: "@mhfgomes"
     icon: "github"
   - name: "Twitter"
     url: "https://x.com/mario_hfg"
+    handle: "@mario_hfg"
     icon: "twitter"
   - name: "Instagram"
     url: "https://www.instagram.com/mario.hfg/"
+    handle: "@mario.hfg"
     icon: "instagram"
 
 # Link groups (Linktree style)

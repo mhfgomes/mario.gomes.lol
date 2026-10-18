@@ -223,14 +223,7 @@ const isCollapsibleCategory = (cat: string) => {
               socials.length === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
             ]}>
               {socials.map((social) => {
-                const isProfileLink =
-                  social.url?.includes('github.com') ||
-                  social.url?.includes('instagram.com') ||
-                  social.url?.includes('x.com') ||
-                  social.url?.includes('twitter.com');
-                const handle = isProfileLink
-                  ? `@${social.url.split('/').filter(Boolean).pop()}`
-                  : social.name;
+                const handle = social.handle ?? social.name;
 
                 return (
                   <a
