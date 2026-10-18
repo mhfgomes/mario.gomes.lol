@@ -71,7 +71,7 @@ const isCollapsibleCategory = (cat: string) => {
           "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
           initialTab === 'links'
             ? "active font-medium text-zinc-900 dark:text-white border-zinc-900 dark:border-white"
-            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
+            : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
         ]}
       >
         Projects & Links
@@ -84,7 +84,7 @@ const isCollapsibleCategory = (cat: string) => {
           "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
           initialTab === 'about'
             ? "active font-medium text-zinc-900 dark:text-white border-zinc-900 dark:border-white"
-            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
+            : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
         ]}
       >
         About
@@ -97,7 +97,7 @@ const isCollapsibleCategory = (cat: string) => {
           "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
           initialTab === 'hardware'
             ? "active font-medium text-zinc-900 dark:text-white border-zinc-900 dark:border-white"
-            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
+            : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
         ]}
       >
         Hardware
@@ -115,7 +115,7 @@ const isCollapsibleCategory = (cat: string) => {
       {groups.map((group: any) => (
         <div class="space-y-3">
           {group.title && (
-            <h2 class="text-xs font-medium text-zinc-400 dark:text-zinc-500 px-0.5">
+            <h2 class="text-xs font-medium text-zinc-500 dark:text-zinc-400 px-0.5">
               {group.title}
             </h2>
           )}
@@ -188,7 +188,7 @@ const isCollapsibleCategory = (cat: string) => {
             <div class="space-y-3.5">
               {skills.map((skillGroup: any) => (
                 <div class="space-y-2">
-                  <span class="text-xs font-medium text-zinc-400 dark:text-zinc-500 block">
+                  <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 block">
                     {skillGroup.category}
                   </span>
                   <div class="flex flex-wrap gap-1.5">
@@ -245,12 +245,12 @@ const isCollapsibleCategory = (cat: string) => {
                         <span class="text-sm font-medium text-zinc-900 dark:text-white block group-hover:text-zinc-600 dark:group-hover:text-zinc-200 transition-colors">
                           {social.name}
                         </span>
-                        <span class="text-xs text-zinc-400 dark:text-zinc-500 block truncate">
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block truncate">
                           {handle}
                         </span>
                       </div>
                     </div>
-                    <span class="text-xs text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200 transition-transform group-hover:translate-x-0.5">
+                    <span class="text-xs text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-200 transition-transform group-hover:translate-x-0.5">
                       ↗
                     </span>
                   </a>
@@ -296,7 +296,7 @@ const isCollapsibleCategory = (cat: string) => {
                   <span class="font-medium text-sm sm:text-base text-zinc-900 dark:text-zinc-100 block">
                     {categoryGroup.category}
                   </span>
-                  <span class="text-xs text-zinc-400 dark:text-zinc-500 block truncate">
+                  <span class="text-xs text-zinc-500 dark:text-zinc-400 block truncate">
                     {categoryGroup.items?.[0]?.name}
                     {categoryGroup.items?.[1] && ` · ${categoryGroup.items[1].name}`}
                   </span>
@@ -328,7 +328,7 @@ const isCollapsibleCategory = (cat: string) => {
                           {item.name}
                         </span>
                         {item.description && (
-                          <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 break-words">
+                          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 break-words">
                             {item.description}
                           </p>
                         )}
@@ -349,7 +349,7 @@ const isCollapsibleCategory = (cat: string) => {
           /* Standard Direct Category (Laptops, Displays, Peripherals) */
           <div class="space-y-3">
             {categoryGroup.category && (
-              <h2 class="text-xs font-medium text-zinc-400 dark:text-zinc-500 px-0.5">
+              <h2 class="text-xs font-medium text-zinc-500 dark:text-zinc-400 px-0.5">
                 {categoryGroup.category}
               </h2>
             )}
@@ -419,7 +419,7 @@ const isCollapsibleCategory = (cat: string) => {
     ];
 
     const activeClasses = ['border-zinc-900', 'dark:border-white', 'text-zinc-900', 'dark:text-white', 'font-medium', 'active'];
-    const inactiveClasses = ['border-transparent', 'text-zinc-400', 'dark:text-zinc-500'];
+    const inactiveClasses = ['border-transparent', 'text-zinc-500', 'dark:text-zinc-400'];
 
     const showTab = (selectedName, updateUrl = true) => {
       const selected = tabs.find(t => t.name === selectedName) || tabs[0];
