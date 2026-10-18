@@ -19,7 +19,7 @@ let displayUrl = "";
 try {
   if (isExternal) {
     const parsed = new URL(url);
-    displayUrl = parsed.hostname.replace('www.', '');
+    displayUrl = parsed.hostname.replace(/^www\./, '');
   }
 } catch {
   displayUrl = "";
