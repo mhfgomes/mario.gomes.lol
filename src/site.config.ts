@@ -13,7 +13,6 @@ export interface SiteConfig {
   avatar?: string;
   theme?: {
     defaultMode?: 'dark' | 'light' | 'system';
-    accentColor?: 'indigo' | 'violet' | 'emerald' | 'blue' | 'rose' | 'amber';
   };
   socialMeta: {
     twitterCard?: string;
@@ -39,8 +38,6 @@ export const siteConfig: SiteConfig = {
   theme: {
     // Choose default theme mode: 'dark', 'light', or 'system'
     defaultMode: 'system',
-    // Choose your primary accent hue: 'indigo', 'violet', 'emerald', 'blue', 'rose', 'amber'
-    accentColor: 'emerald',
   },
 
   // Social & SEO preview
