@@ -105,12 +105,14 @@ const activeIndicator = status?.indicator && indicatorColors[status.indicator] ?
           href={social.url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={social.label || social.name}
           title={social.label || social.name}
           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100/90 dark:bg-zinc-900/90 hover:bg-zinc-200/80 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
         >
           <Icon name={social.icon || social.name.toLowerCase()} class="w-3.5 h-3.5" />
           <span>{social.name}</span>
+          {social.label && social.label !== social.name && (
+            <span class="sr-only">{social.label}</span>
+          )}
         </a>
       ))}
     </div>
