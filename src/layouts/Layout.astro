@@ -11,7 +11,7 @@ interface Props {
 const {
   title = siteConfig.title,
   description = siteConfig.description,
-  image = siteConfig.socialMeta.ogImage || "/avatar.svg",
+  image = siteConfig.socialMeta?.ogImage || "/avatar.svg",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, siteConfig.url);
@@ -43,12 +43,12 @@ const hasFooter = Boolean(siteConfig.footer?.customText || siteConfig.footer?.sh
     <meta property="og:image" content={ogImageURL} />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content={siteConfig.socialMeta.twitterCard} />
+    <meta name="twitter:card" content={siteConfig.socialMeta?.twitterCard} />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
-    {siteConfig.handle && <meta name="twitter:creator" content={siteConfig.handle} />}
+    {siteConfig.twitterHandle && <meta name="twitter:creator" content={siteConfig.twitterHandle} />}
 
     <!-- Color Scheme & Theme Initialization Script (prevents FOUC) -->
     <script is:inline>
