@@ -19,6 +19,7 @@ const profile = defineCollection({
       url: z.url(),
       icon: z.string(),
       label: z.string().optional(),
+      handle: z.string().optional(),
     })),
     groups: z.array(z.strictObject({
       title: z.string().optional(),
