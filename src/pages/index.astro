@@ -67,6 +67,7 @@ const isCollapsibleCategory = (cat: string) => {
       <a
         id="tab-links"
         href="/"
+        aria-current={initialTab === "links" ? "page" : undefined}
         class:list={[
           "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
           initialTab === 'links'
@@ -79,7 +80,8 @@ const isCollapsibleCategory = (cat: string) => {
 
       <a
         id="tab-about"
-        href="/about"
+        href="/about/"
+        aria-current={initialTab === "about" ? "page" : undefined}
         class:list={[
           "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
           initialTab === 'about'
@@ -92,7 +94,8 @@ const isCollapsibleCategory = (cat: string) => {
 
       <a
         id="tab-hardware"
-        href="/hardware"
+        href="/hardware/"
+        aria-current={initialTab === "hardware" ? "page" : undefined}
         class:list={[
           "tab-btn pb-3 text-sm -mb-px transition-colors cursor-pointer border-b-2",
           initialTab === 'hardware'
@@ -414,69 +417,83 @@ const isCollapsibleCategory = (cat: string) => {
 
     const tabs = [
       { name: 'links', path: '/', tab: tabLinks, panel: panelLinks },
-      { name: 'about', path: '/about', tab: tabAbout, panel: panelAbout },
-      { name: 'hardware', path: '/hardware', tab: tabHardware, panel: panelHardware }
+      { name: 'about', path: '/about/', tab: tabAbout, panel: panelAbout },
+      { name: 'hardware', path: '/hardware/', tab: tabHardware, panel: panelHardware }
     ];
 
     const activeClasses = ['border-zinc-900', 'dark:border-white', 'text-zinc-900', 'dark:text-white', 'font-medium', 'active'];
-    const inactiveClasses = ['border-transparent', 'text-zinc-500', 'dark:text-zinc-400'];
+    const inactiveClasses = ['border-transparent', 'text-zinc-500', 'dark:text-zinc-400', 'hover:text-zinc-700', 'dark:hover:text-zinc-300'];
 
-    const showTab = (selectedName, updateUrl = true) => {
+    const normalizePath = (p) => (p.endsWith('/') ? p : p + '/');
+
+    const updateCanonical = (path) => {
+      const url = new URL(path, window.location.origin).href;
+      document.querySelector('link[rel="canonical"]')?.setAttribute('href', url);
+      document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
+      document.querySelector('meta[name="twitter:url"]')?.setAttribute('content', url);
+    };
+
+    const showTab = (selectedName, updateUrl = 'push') => {
       const selected = tabs.find(t => t.name === selectedName) || tabs[0];
 
       tabs.forEach(({ name, tab, panel }) => {
         if (name === selected.name) {
           tab.classList.add(...activeClasses);
           tab.classList.remove(...inactiveClasses);
+          tab.setAttribute('aria-current', 'page');
           panel.classList.remove('hidden');
         } else {
           tab.classList.remove(...activeClasses);
           tab.classList.add(...inactiveClasses);
+          tab.removeAttribute('aria-current');
           panel.classList.add('hidden');
         }
       });
 
-      if (updateUrl && window.location.pathname !== selected.path) {
-        history.pushState(null, '', selected.path);
+      if (updateUrl && normalizePath(window.location.pathname) !== selected.path) {
+        if (updateUrl === 'replace') history.replaceState(null, '', selected.path);
+        else history.pushState(null, '', selected.path);
       }
+      updateCanonical(selected.path);
+      return selected;
     };
 
-    tabLinks.addEventListener('click', (e) => {
-      e.preventDefault();
-      showTab('links');
-    });
+    // Only intercept unmodified primary clicks so new-tab/window gestures still work
+    const isPlainClick = (e) =>
+      e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
 
-    tabAbout.addEventListener('click', (e) => {
-      e.preventDefault();
-      showTab('about');
-    });
-
-    tabHardware.addEventListener('click', (e) => {
-      e.preventDefault();
-      showTab('hardware');
+    tabs.forEach(({ name, tab }) => {
+      tab.addEventListener('click', (e) => {
+        if (!isPlainClick(e)) return;
+        e.preventDefault();
+        showTab(name);
+      });
     });
 
     backButtons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
+        if (!isPlainClick(e)) return;
         e.preventDefault();
-        showTab('links');
+        const { tab } = showTab('links');
+        tab.focus({ preventScroll: true });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
 
+    const tabFromPath = () => {
+      const path = normalizePath(window.location.pathname);
+      return (tabs.find(t => t.path === path) || tabs[0]).name;
+    };
+
     window.addEventListener('popstate', () => {
-      const path = window.location.pathname.replace(/\/$/, '') || '/';
-      if (path === '/about') showTab('about', false);
-      else if (path === '/hardware') showTab('hardware', false);
-      else showTab('links', false);
+      showTab(tabFromPath(), false);
     });
 
-    // Check initial path
-    const path = window.location.pathname.replace(/\/$/, '') || '/';
-    if (path === '/about') showTab('about', false);
-    else if (path === '/hardware') showTab('hardware', false);
-    else if (window.location.hash === '#about') showTab('about', true);
-    else if (window.location.hash === '#hardware') showTab('hardware', true);
+    // Check initial path; legacy #about / #hardware hashes redirect without adding history entries
+    const initial = tabFromPath();
+    if (initial !== 'links') showTab(initial, false);
+    else if (window.location.hash === '#about') showTab('about', 'replace');
+    else if (window.location.hash === '#hardware') showTab('hardware', 'replace');
   };
 
   setupTabs();
