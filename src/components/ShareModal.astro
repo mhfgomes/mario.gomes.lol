@@ -28,6 +28,11 @@ const { title, url } = Astro.props;
     <span data-share-icon-success class="hidden text-emerald-500 dark:text-emerald-400 transition-transform duration-200 scale-110">
       <Icon name="check" class="w-4 h-4" />
     </span>
+
+    <!-- Error Icon -->
+    <span data-share-icon-error class="hidden text-red-500 dark:text-red-400 transition-transform duration-200 scale-110">
+      <Icon name="circle-alert" class="w-4 h-4" />
+    </span>
   </button>
 
   <!-- Clean dropdown feedback bubble below the button -->
@@ -35,10 +40,16 @@ const { title, url } = Astro.props;
     data-share-toast
     role="status"
     aria-live="polite"
+    aria-hidden="true"
     class="absolute right-0 top-full mt-2 pointer-events-none opacity-0 translate-y-1 transition-all duration-200 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-xl text-xs font-medium whitespace-nowrap border border-zinc-800 dark:border-zinc-200"
   >
-    <Icon name="check" class="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600 shrink-0" />
-    <span data-share-toast-text>Link copied!</span>
+    <span data-share-toast-icon-success class="hidden">
+      <Icon name="check" class="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600 shrink-0" />
+    </span>
+    <span data-share-toast-icon-error class="hidden">
+      <Icon name="circle-alert" class="w-3.5 h-3.5 text-red-400 dark:text-red-600 shrink-0" />
+    </span>
+    <span data-share-toast-text></span>
   </div>
 </div>
 
@@ -49,40 +60,54 @@ const { title, url } = Astro.props;
     const toastText = root.querySelector<HTMLElement>('[data-share-toast-text]');
     const iconDefault = root.querySelector<HTMLElement>('[data-share-icon-default]');
     const iconSuccess = root.querySelector<HTMLElement>('[data-share-icon-success]');
+    const iconError = root.querySelector<HTMLElement>('[data-share-icon-error]');
+    const toastIconSuccess = root.querySelector<HTMLElement>('[data-share-toast-icon-success]');
+    const toastIconError = root.querySelector<HTMLElement>('[data-share-toast-icon-error]');
     if (!btn || root.dataset.bound) return;
     root.dataset.bound = 'true';
 
+    const successRing = ['ring-2', 'ring-emerald-500/50'];
+    const errorRing = ['ring-2', 'ring-red-500/50'];
     let resetTimer: ReturnType<typeof setTimeout> | undefined;
+    let announceTimer: ReturnType<typeof setTimeout> | undefined;
 
-    const triggerSuccessFeedback = (message = 'Link copied!') => {
-      if (toastText) toastText.textContent = message;
-
-      // Show toast below button
+    const reset = () => {
       if (toast) {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-1');
+        toast.setAttribute('aria-hidden', 'true');
+      }
+      if (toastText) toastText.textContent = '';
+      iconDefault?.classList.remove('hidden');
+      iconSuccess?.classList.add('hidden');
+      iconError?.classList.add('hidden');
+      btn.classList.remove(...successRing, ...errorRing);
+    };
+
+    const showFeedback = (kind: 'success' | 'error', message: string) => {
+      clearTimeout(resetTimer);
+      clearTimeout(announceTimer);
+      reset();
+
+      const isError = kind === 'error';
+      toastIconSuccess?.classList.toggle('hidden', isError);
+      toastIconError?.classList.toggle('hidden', !isError);
+      iconDefault?.classList.add('hidden');
+      (isError ? iconError : iconSuccess)?.classList.remove('hidden');
+      btn.classList.add(...(isError ? errorRing : successRing));
+
+      if (toast) {
+        toast.removeAttribute('aria-hidden');
         toast.classList.remove('opacity-0', 'translate-y-1');
         toast.classList.add('opacity-100', 'translate-y-0');
       }
 
-      // Swap button icon to check
-      if (iconDefault && iconSuccess) {
-        iconDefault.classList.add('hidden');
-        iconSuccess.classList.remove('hidden');
-      }
+      // Set the text after clearing it so repeat messages are re-announced
+      announceTimer = setTimeout(() => {
+        if (toastText) toastText.textContent = message;
+      }, 50);
 
-      btn.classList.add('ring-2', 'ring-emerald-500/50');
-
-      clearTimeout(resetTimer);
-      resetTimer = setTimeout(() => {
-        if (toast) {
-          toast.classList.remove('opacity-100', 'translate-y-0');
-          toast.classList.add('opacity-0', 'translate-y-1');
-        }
-        if (iconDefault && iconSuccess) {
-          iconDefault.classList.remove('hidden');
-          iconSuccess.classList.add('hidden');
-        }
-        btn.classList.remove('ring-2', 'ring-emerald-500/50');
-      }, 2000);
+      resetTimer = setTimeout(reset, 2000);
     };
 
     btn.addEventListener('click', async () => {
@@ -107,9 +132,9 @@ const { title, url } = Astro.props;
       // Clipboard fallback
       try {
         await navigator.clipboard.writeText(shareUrl);
-        triggerSuccessFeedback('Link copied!');
+        showFeedback('success', 'Link copied!');
       } catch (e) {
-        triggerSuccessFeedback('Failed to copy');
+        showFeedback('error', 'Failed to copy');
       }
     });
   };
