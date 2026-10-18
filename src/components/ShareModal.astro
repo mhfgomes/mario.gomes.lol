@@ -9,9 +9,9 @@ interface Props {
 const { title, url } = Astro.props;
 ---
 
-<div class="relative inline-flex items-center">
+<div data-share class="relative inline-flex items-center">
   <button
-    id="share-btn"
+    data-share-btn
     type="button"
     aria-label="Share this profile"
     data-url={url}
@@ -20,38 +20,39 @@ const { title, url } = Astro.props;
     title="Share or copy profile link"
   >
     <!-- Default Share Icon -->
-    <span id="share-icon-default" class="transition-transform duration-200">
+    <span data-share-icon-default class="transition-transform duration-200">
       <Icon name="share-2" class="w-4 h-4" />
     </span>
 
     <!-- Success Check Icon -->
-    <span id="share-icon-success" class="hidden text-emerald-500 dark:text-emerald-400 transition-transform duration-200 scale-110">
+    <span data-share-icon-success class="hidden text-emerald-500 dark:text-emerald-400 transition-transform duration-200 scale-110">
       <Icon name="check" class="w-4 h-4" />
     </span>
   </button>
 
   <!-- Clean dropdown feedback bubble below the button -->
   <div
-    id="share-toast"
+    data-share-toast
     role="status"
     aria-live="polite"
     class="absolute right-0 top-full mt-2 pointer-events-none opacity-0 translate-y-1 transition-all duration-200 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-xl text-xs font-medium whitespace-nowrap border border-zinc-800 dark:border-zinc-200"
   >
     <Icon name="check" class="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600 shrink-0" />
-    <span id="share-toast-text">Link copied!</span>
+    <span data-share-toast-text>Link copied!</span>
   </div>
 </div>
 
-<script is:inline>
-  const setupShare = () => {
-    const btn = document.getElementById('share-btn');
-    const toast = document.getElementById('share-toast');
-    const toastText = document.getElementById('share-toast-text');
-    const iconDefault = document.getElementById('share-icon-default');
-    const iconSuccess = document.getElementById('share-icon-success');
-    if (!btn) return;
+<script>
+  const setupShare = (root: HTMLElement) => {
+    const btn = root.querySelector<HTMLButtonElement>('[data-share-btn]');
+    const toast = root.querySelector<HTMLElement>('[data-share-toast]');
+    const toastText = root.querySelector<HTMLElement>('[data-share-toast-text]');
+    const iconDefault = root.querySelector<HTMLElement>('[data-share-icon-default]');
+    const iconSuccess = root.querySelector<HTMLElement>('[data-share-icon-success]');
+    if (!btn || root.dataset.bound) return;
+    root.dataset.bound = 'true';
 
-    let resetTimer;
+    let resetTimer: ReturnType<typeof setTimeout> | undefined;
 
     const triggerSuccessFeedback = (message = 'Link copied!') => {
       if (toastText) toastText.textContent = message;
@@ -96,7 +97,7 @@ const { title, url } = Astro.props;
           });
           return;
         } catch (err) {
-          if (err.name === 'AbortError') {
+          if (err instanceof Error && err.name === 'AbortError') {
             return;
           }
           // Fall through to clipboard if share failed
@@ -113,5 +114,10 @@ const { title, url } = Astro.props;
     });
   };
 
-  setupShare();
+  const setupShares = () => {
+    document.querySelectorAll<HTMLElement>('[data-share]').forEach(setupShare);
+  };
+
+  setupShares();
+  document.addEventListener('astro:page-load', setupShares);
 </script>
