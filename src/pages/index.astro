@@ -287,7 +287,7 @@ const isCollapsibleCategory = (cat: string) => {
         return isCollapsible ? (
           /* Collapsible System Accordion */
           <details class="group rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden shadow-2xs transition-all">
-            <summary class="flex items-center justify-between gap-3.5 p-4 sm:p-4.5 cursor-pointer list-none select-none hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors focus:outline-hidden">
+            <summary class="flex items-center justify-between gap-3.5 p-4 sm:p-4.5 cursor-pointer list-none select-none hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-600 dark:focus-visible:ring-indigo-400">
               <div class="flex items-center gap-3.5 min-w-0 flex-1">
                 <div class="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300">
                   <Icon name={iconName} class="w-4 h-4" />
