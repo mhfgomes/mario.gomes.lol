@@ -59,6 +59,20 @@ groups:
         description: "Custom aerial live wallpapers for macOS."
         icon: "apple"
 
+      - title: "FastRenamer"
+        url: "https://github.com/mhfgomes/fastrenamer"
+        github: "https://github.com/mhfgomes/fastrenamer"
+        releases: "https://github.com/mhfgomes/fastrenamer/releases"
+        description: "Desktop batch file renaming utility."
+        icon: "tag"
+
+      - title: "KaraokeThing"
+        url: "https://github.com/mhfgomes/KaraokeThing"
+        github: "https://github.com/mhfgomes/KaraokeThing"
+        releases: "https://github.com/mhfgomes/KaraokeThing/releases"
+        description: "Private karaoke app for parties on your home network."
+        icon: "mic"
+
   - title: "Elsewhere"
     items:
       - title: "GitHub"
