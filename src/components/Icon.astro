@@ -285,7 +285,10 @@ const icons: Record<string, { viewBox?: string; fill?: string; stroke?: boolean;
   }
 };
 
-const iconData = icons[name] || icons["arrow-up-right"];
+const iconData = icons[name];
+if (!iconData) {
+  throw new Error(`Unknown icon "${name}". Available icons: ${Object.keys(icons).join(", ")}`);
+}
 ---
 
 <svg
